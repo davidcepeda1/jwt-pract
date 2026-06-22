@@ -88,7 +88,14 @@ app.get('/', (req, res) => {
 `);
 });
 
+// Sentry intercepta y reporta a la nube antes de pasar al siguiente handler
 Sentry.setupExpressErrorHandler(app);
+
+// Handler global de errores operacionales — devuelve JSON controlado al cliente
+// eslint-disable-next-line no-unused-vars
+app.use((err, req, res, next) => {
+    res.status(500).json({ error: 'Error interno del servidor' });
+});
 
 app.listen(config.PORT, () => {
     console.log(`Servidor corriendo en http://localhost:${config.PORT}`);
