@@ -1,0 +1,19 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+build/
+coverage/
+
+# Environment & secrets
+.env
+*.pem
+
+# Logs & temp files
+*.log
+*.tmp
+
+# OS artifacts
+.DS_Store
+Thumbs.db
