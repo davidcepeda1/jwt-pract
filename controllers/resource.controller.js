@@ -7,13 +7,29 @@ export class ResourceController {
     }
 
     static getBetaPrivateData(req, res) {
-        res.status(200).json({
-            service: 'service-beta',
-            message: 'Acceso concedido al recurso privado de Service Beta',
-            authenticatedUser: {
-                id: req.user.sub,
-                name: req.user.name,
-            },
-        });
+        const userId = req.user.sub;
+
+        try {
+            // Simulación de fallo operacional en Service Beta
+            throw new Error('Timeout al consultar el servicio de inventario');
+        } catch (err) {
+            Sentry.withScope((scope) => {
+                // Tags indexables: aparecen como filtros en el dashboard de Sentry
+                scope.setTag('service', 'service-beta');
+                scope.setTag('affected_user', userId);
+
+                // Contexto extra: visible en el panel de detalle del evento
+                scope.setExtra('transfer_payload', {
+                    endpoint: 'GET /v1/service-beta/private',
+                    timestamp: new Date().toISOString(),
+                    // No se incluye: token, password, headers de autorización
+                });
+
+                scope.setLevel('error');
+                Sentry.captureException(err);
+            });
+
+            return res.status(500).json({ error: 'Error interno en Service Beta' });
+        }
     }
 }
