@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/node';
 import jwt from 'jsonwebtoken';
 import { JwtService } from '../services/jwt.service.js';
 
@@ -5,6 +6,7 @@ export const authMiddleware = (req, res, next) => {
     const authHeader = req.headers['authorization'];
 
     if (!authHeader?.startsWith('Bearer ')) {
+        // Error lógico: ausencia de credencial — decisión del cliente, no un crash
         return res.status(401).json({ error: 'Token no proporcionado' });
     }
 
@@ -14,16 +16,17 @@ export const authMiddleware = (req, res, next) => {
         req.user = JwtService.verifyToken(token);
         next();
     } catch (err) {
+        // Errores lógicos de JWT: comportamiento esperado, no se reportan a Sentry
         if (err instanceof jwt.TokenExpiredError) {
             return res.status(401).json({ error: 'Token expirado' });
         }
 
         if (err instanceof jwt.JsonWebTokenError) {
-            // Cubre: firma inválida, algoritmo no permitido, token malformado
-            return res.status(401).json({ error: 'Token inválido' });
+            return res.status(403).json({ error: 'Token inválido' });
         }
 
-        // Error inesperado — no exponer detalles internos
+        // Error operacional inesperado: sí se reporta a Sentry
+        Sentry.captureException(err);
         return res.status(500).json({ error: 'Error interno de autenticación' });
     }
 };
