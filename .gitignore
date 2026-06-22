@@ -17,3 +17,7 @@ coverage/
 # OS artifacts
 .DS_Store
 Thumbs.db
+
+# IDE & editor files
+.claude/
+.codegraph/
