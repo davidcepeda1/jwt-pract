@@ -1,19 +1,23 @@
 export class ResourceController {
-    /**
-     * Simula un recurso privado del Microservicio Alpha.
-     */
     static getAlphaPrivateData(req, res) {
-        // TODO: Implementar respuesta para Microservicio Alpha.
-        // 1. Responder con un mensaje que indique acceso exitoso al Servicio Alpha.
-        // 2. Incluir datos del usuario autenticado (req.user) en la respuesta.
+        res.status(200).json({
+            service: 'service-alpha',
+            message: 'Acceso concedido al recurso privado de Service Alpha',
+            authenticatedUser: {
+                id: req.user.sub,
+                name: req.user.name,
+            },
+        });
     }
 
-    /**
-     * Simula un recurso privado del Microservicio Beta.
-     */
     static getBetaPrivateData(req, res) {
-        // TODO: Implementar respuesta para Microservicio Beta.
-        // 1. Responder con un mensaje que indique acceso exitoso al Servicio Beta.
-        // 2. Incluir datos del usuario autenticado (req.user) en la respuesta.
+        res.status(200).json({
+            service: 'service-beta',
+            message: 'Acceso concedido al recurso privado de Service Beta',
+            authenticatedUser: {
+                id: req.user.sub,
+                name: req.user.name,
+            },
+        });
     }
 }
