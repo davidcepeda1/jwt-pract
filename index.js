@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/node';
 import express from 'express';
 import cors from 'cors';
 import { config } from './config/env.js';
@@ -86,6 +87,8 @@ app.get('/', (req, res) => {
 </html>
 `);
 });
+
+Sentry.setupExpressErrorHandler(app);
 
 app.listen(config.PORT, () => {
     console.log(`Servidor corriendo en http://localhost:${config.PORT}`);
